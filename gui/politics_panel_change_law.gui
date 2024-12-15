@@ -263,7 +263,7 @@ types politics_panel_change_law {
 
 										hbox = {
 											layoutpolicy_horizontal = preferred
-											visible = "[GreaterThan_int32(GetDefine('NPolitics', 'LAW_ENACTMENT_MAX_SETBACKS'), '(int32)0')]"
+											visible = "[GreaterThan_int32(GetPlayer.GetMaxLawEnactmentSetbacks, '(int32)0')]"
 											spacing = 4
 											margin = { 0 10 }
 
@@ -277,7 +277,7 @@ types politics_panel_change_law {
 
 											#Setback 1
 											enactment_setback = {
-												visible = "[GreaterThanOrEqualTo_int32(GetDefine('NPolitics', 'LAW_ENACTMENT_MAX_SETBACKS'), '(int32)1')]"
+												visible = "[GreaterThanOrEqualTo_int32(GetPlayer.GetMaxLawEnactmentSetbacks, '(int32)1')]"
 
 												blockoverride "has_setback_visibility" {
 													visible = "[GreaterThanOrEqualTo_int32(Law.GetEnactmentSetbackCount, '(int32)1')]"
@@ -286,7 +286,7 @@ types politics_panel_change_law {
 
 											#Setback 2
 											enactment_setback = {
-												visible = "[GreaterThanOrEqualTo_int32(GetDefine('NPolitics', 'LAW_ENACTMENT_MAX_SETBACKS'), '(int32)2')]"
+												visible = "[GreaterThanOrEqualTo_int32(GetPlayer.GetMaxLawEnactmentSetbacks, '(int32)2')]"
 
 												blockoverride "has_setback_visibility" {
 													visible = "[GreaterThanOrEqualTo_int32(Law.GetEnactmentSetbackCount, '(int32)2')]"
@@ -295,7 +295,7 @@ types politics_panel_change_law {
 
 											#Setback 3
 											enactment_setback = {
-												visible = "[GreaterThanOrEqualTo_int32(GetDefine('NPolitics', 'LAW_ENACTMENT_MAX_SETBACKS'), '(int32)3')]"
+												visible = "[GreaterThanOrEqualTo_int32(GetPlayer.GetMaxLawEnactmentSetbacks, '(int32)3')]"
 
 												blockoverride "has_setback_visibility" {
 													visible = "[GreaterThanOrEqualTo_int32(Law.GetEnactmentSetbackCount, '(int32)3')]"
@@ -304,7 +304,7 @@ types politics_panel_change_law {
 
 											#Setback 4
 											enactment_setback = {
-												visible = "[GreaterThanOrEqualTo_int32(GetDefine('NPolitics', 'LAW_ENACTMENT_MAX_SETBACKS'), '(int32)4')]"
+												visible = "[GreaterThanOrEqualTo_int32(GetPlayer.GetMaxLawEnactmentSetbacks, '(int32)4')]"
 
 												blockoverride "has_setback_visibility" {
 													visible = "[GreaterThanOrEqualTo_int32(Law.GetEnactmentSetbackCount, '(int32)4')]"
@@ -313,7 +313,7 @@ types politics_panel_change_law {
 
 											#Setback 5
 											enactment_setback = {
-												visible = "[GreaterThanOrEqualTo_int32(GetDefine('NPolitics', 'LAW_ENACTMENT_MAX_SETBACKS'), '(int32)5')]"
+												visible = "[GreaterThanOrEqualTo_int32(GetPlayer.GetMaxLawEnactmentSetbacks, '(int32)5')]"
 
 												blockoverride "has_setback_visibility" {
 													visible = "[GreaterThanOrEqualTo_int32(Law.GetEnactmentSetbackCount, '(int32)5')]"
@@ -322,7 +322,7 @@ types politics_panel_change_law {
 
 											#Setback 6
 											enactment_setback = {
-												visible = "[GreaterThanOrEqualTo_int32(GetDefine('NPolitics', 'LAW_ENACTMENT_MAX_SETBACKS'), '(int32)6')]"
+												visible = "[GreaterThanOrEqualTo_int32(GetPlayer.GetMaxLawEnactmentSetbacks, '(int32)6')]"
 
 												blockoverride "has_setback_visibility" {
 													visible = "[GreaterThanOrEqualTo_int32(Law.GetEnactmentSetbackCount, '(int32)6')]"
@@ -469,25 +469,24 @@ types politics_panel_change_law {
 											
 											textbox = {
 												name = "tutorial_highlight_enacting_law_success_chance"
-
+												alpha = "[TransparentIfFalse(GreaterThan_CFixedPoint(Law.GetCheckpointSuccessChance, '(CFixedPoint)0'))]"
 												layoutpolicy_horizontal = expanding
 												size = { 0 25 }
-												text = "OUTCOME_SUCCESS"
 												using = fontsize_large
 												align = left|nobaseline
 												elide = right
-												alpha = "[TransparentIfFalse(GreaterThan_CFixedPoint(Law.GetCheckpointSuccessChance, '(CFixedPoint)0'))]"
 												fontsize_min = 14
+												text = "OUTCOME_SUCCESS"
 											}
 											textbox = {
 												layoutpolicy_horizontal = expanding
+												alpha = "[TransparentIfFalse(GreaterThan_CFixedPoint(Law.GetCheckpointAdvanceChance, '(CFixedPoint)0'))]"
 												size = { 0 25 }
-												text = "OUTCOME_ADVANCE"
 												using = fontsize_large
 												align = left|nobaseline
 												elide = right
-												alpha = "[TransparentIfFalse(GreaterThan_CFixedPoint(Law.GetCheckpointAdvanceChance, '(CFixedPoint)0'))]"
 												fontsize_min = 14
+												text = "OUTCOME_ADVANCE"
 											}
 										}
 										hbox = {
@@ -497,23 +496,23 @@ types politics_panel_change_law {
 											
 											textbox = {
 												layoutpolicy_horizontal = expanding
+												alpha = "[TransparentIfFalse(GreaterThan_CFixedPoint(Law.GetCheckpointDebateChance, '(CFixedPoint)0'))]"
 												size = { 0 25 }
-												text = "OUTCOME_DEBATE"
 												using = fontsize_large
 												align = left|nobaseline
 												elide = right
-												alpha = "[TransparentIfFalse(GreaterThan_CFixedPoint(Law.GetCheckpointDebateChance, '(CFixedPoint)0'))]"
 												fontsize_min = 14
+												text = "OUTCOME_DEBATE"
 											}
 											textbox = {
 												layoutpolicy_horizontal = expanding
+												alpha = "[TransparentIfFalse(GreaterThan_CFixedPoint(Law.GetCheckpointStallChance, '(CFixedPoint)0'))]"
 												size = { 0 25 }
-												text = "OUTCOME_STALL"
 												using = fontsize_large
 												align = left|nobaseline
 												elide = right
-												alpha = "[TransparentIfFalse(GreaterThan_CFixedPoint(Law.GetCheckpointStallChance, '(CFixedPoint)0'))]"
 												fontsize_min = 14
+												text = "OUTCOME_STALL"
 											}
 										}
 									}

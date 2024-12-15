@@ -12,7 +12,23 @@ types pop_browser_panel_types
 			text = "POP_BROWSER"
 		}
 
-		blockoverride "entire_content_area" {
+		blockoverride "animation_state_block" {
+			state = {
+				name = _show
+				start_sound = {
+					soundeffect = "event:/SFX/UI/Population/population_census_data"
+				}
+				start_sound = {
+					soundeffect = "snapshot:/Dynamic/mute_world_80"
+				}
+				start_sound = {
+					soundeffect = "snapshot:/Dynamic/mute_vfx_war_100"
+
+				}
+			}
+		}
+
+		blockoverride "scrollarea_content" {
 			vbox = {
 				layoutpolicy_vertical = expanding
 				layoutpolicy_horizontal = expanding
@@ -141,36 +157,9 @@ types pop_browser_panel_types
 								align = center|nobaseline
 							}
 
-							enabled = "[Or(Or(Or(Or(Or(Or(Or(Or(Or(Or(Or(Or(Or(Or(Or(Or(Or(Or(Or(PopBrowserPanel.IsFiltered('accepted_culturally'), PopBrowserPanel.IsFiltered('accepted_religiously')), PopBrowserPanel.IsFiltered('employed')), PopBrowserPanel.IsFiltered('lives_in_incorporated_state')), PopBrowserPanel.IsFiltered('pop_type')), PopBrowserPanel.IsFiltered('state')), PopBrowserPanel.IsFiltered('culture')), PopBrowserPanel.IsFiltered('religion')), PopBrowserPanel.IsFiltered('has_loyalists')), PopBrowserPanel.IsFiltered('has_radicals')), PopBrowserPanel.IsFiltered('is_growing')), PopBrowserPanel.IsFiltered('is_shrinking')), PopBrowserPanel.IsFiltered('has_increasing_sol')), PopBrowserPanel.IsFiltered('has_decreasing_sol')), PopBrowserPanel.IsFiltered('is_above_expected_sol')), PopBrowserPanel.IsFiltered('is_below_expected_sol')), PopBrowserPanel.IsFiltered('is_10_or_larger')), PopBrowserPanel.IsFiltered('is_100_or_larger')), PopBrowserPanel.IsFiltered('is_1000_or_larger')), PopBrowserPanel.IsFiltered('is_jobseeker'))]"
-							
-							onclick = "[PopBrowserPanel.SetFilterMode('accepted_culturally', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('accepted_religiously', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('employed', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('lives_in_incorporated_state', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('has_loyalists', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('has_radicals', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('is_growing', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('is_shrinking', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('has_increasing_sol', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('has_decreasing_sol', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('is_above_expected_sol', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('is_below_expected_sol', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('is_10_or_larger', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('is_100_or_larger', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('is_1000_or_larger', 'off')]"
-							onclick = "[PopBrowserPanel.SetFilterMode('is_jobseeker', 'off')]"
+							enabled = "[PopBrowserPanel.IsAnyFilterActive]"
 
-							onclick = "[PopBrowserPanel.SetFilterMode('pop_type', 'off')]"
-							onclick = "[PopBrowserPanel.ClearPopTypeFilter]"
-							
-							onclick = "[PopBrowserPanel.SetFilterMode('state', 'off')]"
-							onclick = "[PopBrowserPanel.ClearStateFilter]"
-
-							onclick = "[PopBrowserPanel.SetFilterMode('culture', 'off')]"
-							onclick = "[PopBrowserPanel.ClearCultureFilter]"
-
-							onclick = "[PopBrowserPanel.SetFilterMode('religion', 'off')]"
-							onclick = "[PopBrowserPanel.ClearReligionFilter]"
+							onclick = "[PopBrowserPanel.ResetAllFilters]"
 						}
 
 						scrollarea = {
@@ -220,21 +209,43 @@ types pop_browser_panel_types
 											visible = "[Not(GetVariableSystem.Exists( 'pop_browser_filter_pop_type' ))]"						
 											using = pop_browser_filter_section
 
-											button = {
-												size = { 400 35 }
-												using = default_button
-												onclick = "[PopBrowserPanel.SetFilterMode('pop_type', 'off')]"
-												onclick = "[PopBrowserPanel.ClearPopTypeFilter]"
+											spacing = 10
 
-												textbox = {
-													size = { 100% 100% }
-													align = hcenter|nobaseline
-													text = "ALL"
+											flowcontainer = {
+												direction = horizontal
+
+												button = {
+													size = { 200 35 }
+													using = default_button
+													onclick = "[PopBrowserPanel.PopTypeFilterShowAll]"
+
+													textbox = {
+														size = { 100% 100% }
+														align = hcenter|nobaseline
+														text = "ALL"
+													}
+
+													icon = {
+														visible = "[PopBrowserPanel.PopTypeFilterAreAllShown]"
+														using = highlighted_square_selection
+													}
 												}
 
-												icon = {
-													visible = "[Not(PopBrowserPanel.IsFiltered('pop_type'))]"
-													using = highlighted_square_selection
+												button = {
+													size = { 200 35 }
+													using = default_button
+													onclick = "[PopBrowserPanel.PopTypeFilterHideAll]"
+
+													textbox = {
+														size = { 100% 100% }
+														align = hcenter|nobaseline
+														text = "NONE"
+													}
+
+													icon = {
+														visible = "[PopBrowserPanel.PopTypeFilterAreNoneShown]"
+														using = highlighted_square_selection
+													}
 												}
 											}
 
@@ -247,7 +258,7 @@ types pop_browser_panel_types
 													button = {
 														size = { 50 70 }
 														using = default_button
-														onclick = "[PopBrowserPanel.ToggleIncludePopTypeInFilter(PopType.AccessSelf)]"
+														onclick = "[PopBrowserPanel.PopTypeFilterToggleShown(PopType.AccessSelf)]"
 														
 														tooltipwidget = {
 															FancyTooltip_PopType = {}
@@ -262,7 +273,7 @@ types pop_browser_panel_types
 														}
 
 														icon = {
-															visible = "[PopBrowserPanel.IsPopTypeIncludedInFilter(PopType.Self)]"
+															visible = "[PopBrowserPanel.PopTypeFilterIsShown(PopType.Self)]"
 															using = highlighted_square_selection
 														}
 
@@ -319,21 +330,43 @@ types pop_browser_panel_types
 										visible = "[Not(GetVariableSystem.Exists( 'pop_browser_filter_state' ))]"							
 										using = pop_browser_filter_section
 
-										button = {
-											size = { 400 35 }
-											using = default_button
-											onclick = "[PopBrowserPanel.SetFilterMode('state', 'off')]"
-											onclick = "[PopBrowserPanel.ClearStateFilter]"
+										spacing = 10
 
-											textbox = {
-												size = { 100% 100% }
-												align = hcenter|nobaseline
-												text = "ALL"
+										flowcontainer = {
+											direction = horizontal
+
+											button = {
+												size = { 200 35 }
+												using = default_button
+												onclick = "[PopBrowserPanel.StateFilterShowAllStates]"
+
+												textbox = {
+													size = { 100% 100% }
+													align = hcenter|nobaseline
+													text = "ALL"
+												}
+
+												icon = {
+													visible = "[PopBrowserPanel.StateFiltersAreAllStatesShown]"
+													using = highlighted_square_selection
+												}
 											}
 
-											icon = {
-												visible = "[Not(PopBrowserPanel.IsFiltered('state'))]"
-												using = highlighted_square_selection
+											button = {
+												size = { 200 35 }
+												using = default_button
+												onclick = "[PopBrowserPanel.StateFilterHideAllStates]"
+
+												textbox = {
+													size = { 100% 100% }
+													align = hcenter|nobaseline
+													text = "NONE"
+												}
+
+												icon = {
+													visible = "[PopBrowserPanel.StateFilterAreNoStatesShown]"
+													using = highlighted_square_selection
+												}
 											}
 										}
 
@@ -346,12 +379,16 @@ types pop_browser_panel_types
 												button = {
 													size = { 200 35 }
 													using = default_button
-													onclick = "[PopBrowserPanel.ToggleIncludeStateInFilter(State.AccessSelf)]"
+													onclick = "[PopBrowserPanel.StateFilterToggleShown(State.AccessSelf)]"
+
+													tooltipwidget = {
+														FancyTooltip_State = {}
+													}
 
 													textbox = {
 														parentanchor = vcenter
 														size = { 150 35 }
-														text = "[State.GetName]"
+														text = "[State.GetNameNoFormatting]"
 														multiline = yes
 														fontsize_min = 12
 														elide = right
@@ -361,7 +398,8 @@ types pop_browser_panel_types
 													}
 
 													icon = {
-														visible = "[PopBrowserPanel.IsStateIncludedInFilter(State.Self)]"
+														visible = "[PopBrowserPanel.StateFilterIsStateShown(State.Self)]"
+														alpha = 0.5
 														using = highlighted_square_selection
 													}
 
@@ -546,6 +584,114 @@ types pop_browser_panel_types
 
 									widget = { size = { 10 10 }}
 
+
+									# ACCEPTANCE STATUS FILTER
+
+									section_header_button = {
+									
+										blockoverride "left_text" {
+											text = "concept_acceptance_status"
+										}
+
+										blockoverride "layout" {
+											using = pop_browser_section_header_size
+										}
+
+										blockoverride "onclick" {
+											onclick = "[GetVariableSystem.Toggle( 'pop_browser_filter_acceptance' )]"
+										}
+										
+										blockoverride "onclick_showmore" {
+											visible = "[Not(GetVariableSystem.Exists( 'pop_browser_filter_acceptance' ))]"
+										}
+
+										blockoverride "onclick_showless" {
+											visible = "[GetVariableSystem.Exists( 'pop_browser_filter_acceptance' )]"
+										}
+									}
+
+									flowcontainer = {
+										visible = "[GetVariableSystem.Exists( 'pop_browser_filter_acceptance' )]" 
+										using = pop_browser_filter_section
+
+										spacing = 5
+
+										flowcontainer = {
+											
+											direction = horizontal
+
+											flowcontainer = {
+												
+												direction = horizontal
+
+												button = {
+													size = { 200 35 }
+													using = default_button
+													onclick = "[PopBrowserPanel.AcceptanceFilterShowAllStatuses]"	
+
+													textbox = {
+														size = { 100% 100% }
+														align = hcenter|nobaseline
+														text = "ALL"
+													}
+
+													icon = {
+														visible = "[PopBrowserPanel.AcceptanceFiltersAreAllStasusesShown]"
+														using = highlighted_square_selection
+													}
+												}
+
+												button = {
+													size = { 200 35 }
+													using = default_button
+													onclick = "[PopBrowserPanel.AcceptanceFilterHideAllStatuses]"
+
+													textbox = {
+														size = { 100% 100% }
+														align = hcenter|nobaseline
+														text = "NONE"
+													}
+
+													icon = {
+														visible = "[PopBrowserPanel.AcceptanceFilterAreNoStatusesShown]"
+														using = highlighted_square_selection
+													}
+												}
+											}
+										}
+
+										dynamicgridbox = {
+											name = "acceptance_status_filters"
+
+											datamodel = "[PopBrowserPanel.GetAllAcceptanceStatuses]"
+											flipdirection = yes
+
+											parentanchor = hcenter
+
+											item = {
+												button = {
+													size = { 80 80 }
+													using = default_button
+													onclick = "[PopBrowserPanel.AcceptanceFilterToggleShown(AcceptanceStatus.AccessSelf)]"
+
+													tooltip = "[AcceptanceStatus.GetName]"
+													using = tooltip_below
+
+													acceptance_status_large_icon = {
+														parentanchor = center
+													}
+
+													icon = {
+														visible = "[PopBrowserPanel.AcceptanceFilterIsStatusShown(AcceptanceStatus.Self)]"
+														using = highlighted_square_selection
+														alpha = 0.5
+													}													
+												}
+											}
+										}
+									}
+
+
 									# CULTURE FILTER
 									section_header_button = {
 										blockoverride "layout" {
@@ -573,21 +719,43 @@ types pop_browser_panel_types
 										visible = "[GetVariableSystem.Exists( 'pop_browser_filter_culture' )]"						
 										using = pop_browser_filter_section
 
-										button = {
-											size = { 400 35 }
-											using = default_button
-											onclick = "[PopBrowserPanel.SetFilterMode('culture', 'off')]"
-											onclick = "[PopBrowserPanel.ClearCultureFilter]"
+										spacing = 10
 
-											textbox = {
-												size = { 100% 100% }
-												align = hcenter|nobaseline
-												text = "ALL"
+										flowcontainer = {
+											direction = horizontal
+
+											button = {
+												size = { 200 35 }
+												using = default_button
+												onclick = "[PopBrowserPanel.CultureFilterShowAll]"
+
+												textbox = {
+													size = { 100% 100% }
+													align = hcenter|nobaseline
+													text = "ALL"
+												}
+
+												icon = {
+													visible = "[PopBrowserPanel.CultureFilterAreAllShown]"
+													using = highlighted_square_selection
+												}
 											}
 
-											icon = {
-												visible = "[Not(PopBrowserPanel.IsFiltered('culture'))]"
-												using = highlighted_square_selection
+											button = {
+												size = { 200 35 }
+												using = default_button
+												onclick = "[PopBrowserPanel.CultureFilterHideAll]"
+
+												textbox = {
+													size = { 100% 100% }
+													align = hcenter|nobaseline
+													text = "NONE"
+												}
+
+												icon = {
+													visible = "[PopBrowserPanel.CultureFilterAreNoneShown]"
+													using = highlighted_square_selection
+												}
 											}
 										}
 
@@ -600,12 +768,16 @@ types pop_browser_panel_types
 												button = {
 													size = { 200 35 }
 													using = default_button
-													onclick = "[PopBrowserPanel.ToggleIncludeCultureInFilter(Culture.AccessSelf)]"
+													onclick = "[PopBrowserPanel.CultureFilterToggleShown(Culture.AccessSelf)]"
+
+													tooltipwidget = {
+														FancyTooltip_Culture = {}
+													}
 
 													textbox = {
 														parentanchor = vcenter
 														size = { 150 35 }
-														text = "[Culture.GetName]"
+														text = "[Culture.GetNameNoFormatting]"
 														multiline = yes
 														fontsize_min = 12
 														elide = right
@@ -615,7 +787,8 @@ types pop_browser_panel_types
 													}
 
 													icon = {
-														visible = "[PopBrowserPanel.IsCultureIncludedInFilter(Culture.Self)]"
+														visible = "[PopBrowserPanel.CultureFilterIsShown(Culture.Self)]"
+														alpha = 0.5
 														using = highlighted_square_selection
 													}
 
@@ -672,21 +845,43 @@ types pop_browser_panel_types
 										visible = "[GetVariableSystem.Exists( 'pop_browser_filter_religion' )]"											
 										using = pop_browser_filter_section
 
-										button = {
-											size = { 400 35 }
-											using = default_button
-											onclick = "[PopBrowserPanel.SetFilterMode('religion', 'off')]"
-											onclick = "[PopBrowserPanel.ClearReligionFilter]"
+										spacing = 10
 
-											textbox = {
-												size = { 100% 100% }
-												align = hcenter|nobaseline
-												text = "ALL"
+										flowcontainer = {
+											direction = horizontal
+
+											button = {
+												size = { 200 35 }
+												using = default_button
+												onclick = "[PopBrowserPanel.ReligionFilterShowAll]"
+
+												textbox = {
+													size = { 100% 100% }
+													align = hcenter|nobaseline
+													text = "ALL"
+												}
+
+												icon = {
+													visible = "[PopBrowserPanel.ReligionFilterAreAllShown]"
+													using = highlighted_square_selection
+												}
 											}
 
-											icon = {
-												visible = "[Not(PopBrowserPanel.IsFiltered('religion'))]"
-												using = highlighted_square_selection
+											button = {
+												size = { 200 35 }
+												using = default_button
+												onclick = "[PopBrowserPanel.ReligionFilterHideAll]"
+
+												textbox = {
+													size = { 100% 100% }
+													align = hcenter|nobaseline
+													text = "NONE"
+												}
+
+												icon = {
+													visible = "[PopBrowserPanel.ReligionFilterAreNoneShown]"
+													using = highlighted_square_selection
+												}
 											}
 										}
 
@@ -699,7 +894,7 @@ types pop_browser_panel_types
 												button = {
 													size = { 200 35 }
 													using = default_button
-													onclick = "[PopBrowserPanel.ToggleIncludeReligionInFilter(Religion.AccessSelf)]"
+													onclick = "[PopBrowserPanel.ReligionFilterToggleShown(Religion.AccessSelf)]"
 
 													icon = {
 														size = { 28 28 }
@@ -708,10 +903,14 @@ types pop_browser_panel_types
 														position = { 8 0 }
 													}
 
+													tooltipwidget = {
+														FancyTooltip_Religion = {}
+													}
+
 													textbox = {
 														position = { 40 0 }
 														size = { 110 35 }
-														text = "[Religion.GetName]"
+														text = "[Religion.GetNameNoFormatting]"
 														multiline = yes
 														fontsize_min = 12
 														elide = right
@@ -720,8 +919,9 @@ types pop_browser_panel_types
 													}
 
 													icon = {
-														visible = "[PopBrowserPanel.IsReligionIncludedInFilter(Religion.Self)]"
+														visible = "[PopBrowserPanel.ReligionFilterIsShown(Religion.Self)]"
 														using = highlighted_square_selection
+														alpha = 0.5
 													}
 
 													container = {
@@ -746,152 +946,6 @@ types pop_browser_panel_types
 														}
 													}
 												}
-											}
-										}
-									}
-
-									# CULTURAL DISCRIMINATION FILTER
-									section_header_button = {
-										blockoverride "layout" {
-											using = pop_browser_section_header_size
-										}
-
-										blockoverride "left_text" {
-											text = "DISCRIMINATION_CULTURAL"
-										}
-
-										blockoverride "onclick" {
-											onclick = "[GetVariableSystem.Toggle( 'pop_browser_filter_discrimination_cultural' )]"
-										}
-										
-										blockoverride "onclick_showmore" {
-											visible = "[Not(GetVariableSystem.Exists( 'pop_browser_filter_discrimination_cultural' ))]"
-										}
-
-										blockoverride "onclick_showless" {
-											visible = "[GetVariableSystem.Exists( 'pop_browser_filter_discrimination_cultural' )]"
-										}
-									}
-
-									flowcontainer = {
-										visible = "[GetVariableSystem.Exists( 'pop_browser_filter_discrimination_cultural' )]"
-										using = pop_browser_filter_section
-
-										button = {
-											using = pop_browser_filter_button
-											text = "ALL"
-											onclick = "[PopBrowserPanel.SetFilterMode('accepted_culturally', 'off')]"
-											using = default_button
-											icon = {
-												visible = "[Not(PopBrowserPanel.IsFiltered('accepted_culturally'))]"
-												using = highlighted_square_selection
-											}
-										}
-
-										button = {
-											text = "ACCEPTED_CULTURALLY"
-											onclick = "[PopBrowserPanel.SetFilterMode('accepted_culturally', 'yes')]"
-											using = pop_browser_filter_button
-											using = default_button
-
-											icon = {
-												using = pop_browser_filter_button_icon
-												texture = "gfx/interface/icons/generic_icons/accepted_icon.dds"
-											}
-
-											icon = {
-												visible = "[PopBrowserPanel.IsFilterYes('accepted_culturally')]"
-												using = highlighted_square_selection
-											}
-										}
-
-										button = {
-											text = "DISCRIMINATED_CULTURALLY"
-											onclick = "[PopBrowserPanel.SetFilterMode('accepted_culturally', 'no')]"
-											using = pop_browser_filter_button
-											using = default_button
-
-											icon = {
-												using = pop_browser_filter_button_icon
-												texture = "gfx/interface/icons/generic_icons/discriminated_icon.dds"
-											}
-
-											icon = {
-												visible = "[PopBrowserPanel.IsFilterNo('accepted_culturally')]"
-												using = highlighted_square_selection
-											}
-										}
-									}
-
-									# RELIGIOUS DISCRIMINATION FILTER
-									section_header_button = {
-										blockoverride "layout" {
-											using = pop_browser_section_header_size
-										}
-
-										blockoverride "left_text" {
-											text = "DISCRIMINATION_RELIGIOUS"
-										}
-
-										blockoverride "onclick" {
-											onclick = "[GetVariableSystem.Toggle( 'pop_browser_filter_discrimination_religious' )]"
-										}
-										
-										blockoverride "onclick_showmore" {
-											visible = "[Not(GetVariableSystem.Exists( 'pop_browser_filter_discrimination_religious' ))]"
-										}
-
-										blockoverride "onclick_showless" {
-											visible = "[GetVariableSystem.Exists( 'pop_browser_filter_discrimination_religious' )]"
-										}
-									}
-
-									flowcontainer = {
-										visible = "[GetVariableSystem.Exists( 'pop_browser_filter_discrimination_religious' )]"
-										using = pop_browser_filter_section
-
-										button = {
-											text = "ALL"
-											onclick = "[PopBrowserPanel.SetFilterMode('accepted_religiously', 'off')]"
-											using = default_button
-											using = pop_browser_filter_button
-
-											icon = {
-												visible = "[Not(PopBrowserPanel.IsFiltered('accepted_religiously'))]"
-												using = highlighted_square_selection
-											}
-										}
-										button = {
-											text = "ACCEPTED_RELIGIOUSLY"
-											onclick = "[PopBrowserPanel.SetFilterMode('accepted_religiously', 'yes')]"
-											using = default_button
-											using = pop_browser_filter_button
-
-											icon = {
-												using = pop_browser_filter_button_icon
-												texture = "gfx/interface/icons/generic_icons/accepted_icon.dds"
-											}
-
-											icon = {
-												visible = "[PopBrowserPanel.IsFilterYes('accepted_religiously')]"
-												using = highlighted_square_selection
-											}
-										}
-
-										button = {
-											text = "DISCRIMINATED_RELIGIOUSLY"
-											onclick = "[PopBrowserPanel.SetFilterMode('accepted_religiously', 'no')]"
-											using = pop_browser_filter_button
-											using = default_button
-
-											icon = {
-												using = pop_browser_filter_button_icon
-												texture = "gfx/interface/icons/generic_icons/discriminated_icon.dds"
-											}
-
-											icon = {
-												visible = "[PopBrowserPanel.IsFilterNo('accepted_religiously')]"
-												using = highlighted_square_selection
 											}
 										}
 									}
@@ -1410,6 +1464,7 @@ types pop_browser_panel_types
 								sort_button = {
 									size = { 90 30 }
 									text = "concept_population"
+									tooltip = "SORT_BY_POPULATION"
 									align = nobaseline
 									onclick = "[PopBrowserPanel.Sort('total_population')]"
 								}
@@ -1417,27 +1472,45 @@ types pop_browser_panel_types
 								sort_button = {
 									size = { 160 30 }
 									text = "POP_TYPE"
+									tooltip = "SORT_BY_POP_TYPE"
 									align = nobaseline
 									onclick = "[PopBrowserPanel.Sort('pop_type')]"
 								}
 
 								sort_button = {
-									size = { 130 30 }
-									text = "[concept_culture]"
+									size = { 40 30 }
+									tooltip = "SORT_BY_ACCEPTANCE"
+
+									onclick = "[PopBrowserPanel.Sort('acceptance')]"
+									
+									button = {
+										texture = "gfx/interface/buttons/sort_button_icons/sort_icon_acceptance.dds"
+										size = { 25 25 }
+										parentanchor = center
+										alwaystransparent = yes
+									}
+								}
+
+								sort_button = {
+									size = { 90 30 }
+									text = "concept_culture"
+									tooltip = "SORT_BY_CULTURE"
 									align = nobaseline
 									onclick = "[PopBrowserPanel.Sort('culture')]"
 								}
 
 								sort_button = {
 									size = { 80 30 }
-									text = "[concept_religion]"
+									text = "concept_religion"
+									tooltip = "SORT_BY_RELIGION"
 									align = nobaseline
 									onclick = "[PopBrowserPanel.Sort('religion')]"
 								}
 
 								sort_button = {
 									size = { 110 30 }
-									text = "[concept_state]"
+									text = "concept_state"
+									tooltip = "SORT_BY_STATE"
 									align = nobaseline
 									onclick = "[PopBrowserPanel.Sort('state')]"
 								}
@@ -1445,6 +1518,7 @@ types pop_browser_panel_types
 								sort_button = {
 									size = { 145 30 }
 									text = "concept_building_workplace"
+									tooltip = "SORT_BY_BUILDING"
 									align = nobaseline
 									onclick = "[PopBrowserPanel.Sort('building')]"
 								}
@@ -1473,6 +1547,7 @@ types pop_browser_panel_types
 									sort_button = {
 										size = { 90 30 }
 										text = "RADICALS"
+										tooltip = "SORT_BY_RADICALS"
 										align = nobaseline
 										onclick = "[PopBrowserPanel.Sort('radicals')]"
 									}
@@ -1480,27 +1555,31 @@ types pop_browser_panel_types
 									sort_button = {
 										size = { 90 30 }
 										text = "LOYALISTS"
+										tooltip = "SORT_BY_LOYALISTS"
 										align = nobaseline
 										onclick = "[PopBrowserPanel.Sort('loyalists')]"
 									}
 
 									sort_button = {
 										size = { 200 30 }
-										text = "[concept_sol]"
+										text = "concept_sol"
+										tooltip = "SORT_BY_SOL"
 										align = nobaseline
 										onclick = "[PopBrowserPanel.Sort('standard_of_living')]"
 									}
 
 									sort_button = {
 										size = { 100 30 }
-										text = "[concept_political_strength]"
+										text = "concept_political_strength"
+										tooltip = "SORT_BY_POLITICAL_STRENGTH"
 										align = nobaseline
 										onclick = "[PopBrowserPanel.Sort('political_strength')]"
 									}
 
 									sort_button = {
 										size = { 100 30 }
-										text = "[concept_interest_group]"
+										text = "concept_interest_group"
+										tooltip = "SORT_BY_INTEREST_GROUP"
 										align = nobaseline
 										onclick = "[PopBrowserPanel.Sort('political_strength')]"
 									}
@@ -1544,13 +1623,15 @@ types pop_browser_panel_types
 									sort_button = {
 										size = { 90 30 }
 										text = "LITERACY"
+										tooltip = "SORT_BY_LITERACY"
 										align = nobaseline
 										onclick = "[PopBrowserPanel.Sort('literacy')]"
 									}
 
 									sort_button = {
 										size = { 90 30 }
-										text = "[concept_job_satisfaction]"
+										text = "concept_job_satisfaction"
+										tooltip = "SORT_BY_JOB_SATISFACTION"
 										align = nobaseline
 										onclick = "[PopBrowserPanel.Sort('job_satisfaction')]"
 									}
@@ -1559,6 +1640,7 @@ types pop_browser_panel_types
 										size = { 400 30 }
 										text = "NEEDS"
 										align = nobaseline
+										enabled = no
 										#onclick = "[PopBrowserPanel.Sort('needs')]"
 									}
 
@@ -1600,6 +1682,7 @@ types pop_browser_panel_types
 								# PAGE 1
 								flowcontainer = {
 									visible = "[Not(GetVariableSystem.Exists('pop_browser_page_2'))]"
+									max_update_rate = 10 # Expensive data functions but don't need to update that often
 									textbox = {
 										text = "[PopBrowserPanel.GetFilteredNumRadicals|Dv]"
 										align = right|nobaseline
@@ -1702,6 +1785,7 @@ types pop_browser_panel_types
 										addrow = @spreadsheet_height
 										addcolumn = @spreadsheet_width
 										datamodel = "[PopBrowserPanel.GetSortedAndFilteredPops]"
+										max_update_rate = 10 # GetSortedAndFilteredPops() builds a list of all pops in country and is very expensive 
 										parentanchor = hcenter
 
 										item = {
@@ -1737,7 +1821,8 @@ types pop_browser_panel_types
 
 													button = {
 														text = "[Pop.GetPopType.GetName]"
-														onclick = "[PopBrowserPanel.ToggleIncludePopTypeInFilter(Pop.AccessPopType)]"
+														onclick = "[PopBrowserPanel.PopTypeFilterHideAll]" 
+														onclick = "[PopBrowserPanel.PopTypeFilterToggleShown(Pop.AccessPopType)]"
 														align = nobaseline
 														size = { 120 @spreadsheet_height }
 														elide = right
@@ -1749,37 +1834,17 @@ types pop_browser_panel_types
 													widget = {
 														size = { 40 @spreadsheet_height }
 
-														button = {
-															size = { 30 @spreadsheet_height }
-															onclick = "[PopBrowserPanel.SetFilterMode('accepted_culturally', 'yes')]"
-															visible = "[Pop.IsAcceptedCulturally]"
+														pop_acceptance_icon = {
 															parentanchor = center
-															tooltip = "ACCEPTED_TOOLTIP_CULTURAL_ACCEPTANCE"
-											
-															icon = {
-																texture = "gfx/interface/icons/generic_icons/accepted_icon.dds"
-																size = { 100% 100% }
-															}
-														}
-
-														button = {
-															size = { 30 @spreadsheet_height }
-															onclick = "[PopBrowserPanel.SetFilterMode('accepted_culturally', 'no')]"
-															visible = "[Not(Pop.IsAcceptedCulturally)]"
-															parentanchor = center
-															tooltip = "DISCRIMINATION_TOOLTIP_CULTURAL_DISCRIMINATION"
-											
-															icon = {
-																texture = "gfx/interface/icons/generic_icons/discriminated_icon.dds"
-																size = { 100% 100% }
-															}
+															size = { 30 30 }
 														}
 													}
 
 													button = {
 														datacontext = "[Pop.AccessCulture]"
 														text = "[Culture.GetNameNoFormatting]"
-														onclick = "[PopBrowserPanel.ToggleIncludeCultureInFilter(Pop.AccessCulture)]"
+														onclick = "[PopBrowserPanel.CultureFilterHideAll]" 
+														onclick = "[PopBrowserPanel.CultureFilterToggleShown(Pop.AccessCulture)]" 
 														align = nobaseline
 														size = { 90 @spreadsheet_height }
 														elide = right
@@ -1789,40 +1854,11 @@ types pop_browser_panel_types
 															FancyTooltip_Culture = {}
 														}
 													}
-
-													widget = {
-														size = { 40 @spreadsheet_height }
-
-														button = {
-															size = { 30 @spreadsheet_height }
-															onclick = "[PopBrowserPanel.SetFilterMode('accepted_religiously', 'yes')]"
-															visible = "[Pop.IsAcceptedReligiously]"
-															parentanchor = right
-															tooltip = "ACCEPTED_TOOLTIP_RELIGIOUS_ACCEPTANCE"
-															
-															icon = {
-																size = { 100% 100% }
-																texture = "gfx/interface/icons/generic_icons/accepted_icon.dds"
-															}
-														}
-
-														button = {
-															size = { 30 @spreadsheet_height }
-															onclick = "[PopBrowserPanel.SetFilterMode('accepted_religiously', 'no')]"
-															visible = "[Not(Pop.IsAcceptedReligiously)]"
-															parentanchor = right
-															tooltip = "DISCRIMINATION_TOOLTIP_RELIGIOUS_DISCRIMINATION"
-
-															icon = {
-																texture = "gfx/interface/icons/generic_icons/discriminated_icon.dds"
-																size = { 100% 100% }
-															}
-														}
-													}
 													
 													button = {
-														size = { 40 @spreadsheet_height }
-														onclick = "[PopBrowserPanel.ToggleIncludeReligionInFilter(Pop.AccessReligion)]"
+														size = { 80 @spreadsheet_height }
+														onclick = "[PopBrowserPanel.ReligionFilterHideAll]" 
+														onclick = "[PopBrowserPanel.ReligionFilterToggleShown(Pop.AccessReligion)]" 
 														datacontext = "[Pop.GetReligion]"
 
 														tooltipwidget = {
@@ -1831,12 +1867,15 @@ types pop_browser_panel_types
 
 														icon = {
 															size = { 30 @spreadsheet_height }
+															parentanchor = center|vcenter
 															texture = "[Religion.GetTexture]"
 														}
 													}
+
 													button = {
 														text = "[Pop.GetState.GetName]"
-														onclick = "[PopBrowserPanel.ToggleIncludeStateInFilter(Pop.AccessState.AccessSelf)]"
+														onclick = "[PopBrowserPanel.StateFilterHideAllStates]"
+														onclick = "[PopBrowserPanel.StateFilterToggleShown(Pop.AccessState)]"
 														align = nobaseline
 														size = { 110 @spreadsheet_height }
 														elide = right
@@ -1849,7 +1888,7 @@ types pop_browser_panel_types
 
 														icon = {
 															size = { 28 28 }
-															texture = "[Pop.GetBuilding.GetTexture]"
+															texture = "[Pop.GetBuilding.GetIcon]"
 															visible = "[Pop.IsEmployed]"
 															parentanchor = vcenter
 														}
@@ -1993,46 +2032,61 @@ types pop_browser_panel_types
 															margin_left = 5
 														}
 
+														v3_stacked_barchart = {
+															parentanchor = vcenter
+															size = { 400 30 }
 
-														widget = {
-															size = { 400 @spreadsheet_height }
-
-															flowcontainer = {
-																margin_left = 5
+															blockoverride "barchart_datamodel" {
 																datamodel = "[Pop.GetTopGoodsConsumption]"
-																tooltip = "[Pop.GetAdditionalSOLFactorsDesc]"
-																parentanchor = vcenter
+															}
 
-																item = {
-																	flowcontainer = {
-																		spacing = 10	
-																		datacontext = "[PopConsumptionGoods.GetGoods]"	
+															blockoverride "barchart_item_stretchfactor" {
+																# This is what is actually setting the size of the item
+																layoutstretchfactor_horizontal = "[FixedPointToInt(Multiply_CFixedPoint(PopConsumptionGoods.GetConsumptionRatio, '(CFixedPoint)100'))]"
+															}
 
-																		icon = {
-																			texture = "[Goods.GetTexture]"
-																			tooltip = "[Goods.GetStatePriceDesc]"
-																			size = { 26 26 }
+															blockoverride "barchart_item_datacontext" {
+																datacontext = "[PopConsumptionGoods.GetGoods]"
+															}
 
-																			textbox = {
-																				using = fontsize_small
-																				text = "[Goods.GetCompareIconAgainstBasePriceNoTooltip( Goods.GetStatePrice )]"
-																				parentanchor = bottom|right
-																				autoresize = yes
-																				align = nobaseline
-																				position = { 5 0 }
-																			}
-																		}
+															blockoverride "barchart_item_tooltip" {
+																tooltipwidget = {
+																	FancyTooltip_Goods_Pop_Consumption = {}
+																}
+															}
+
+															blockoverride "barchart_item_color" {
+																color = "[Goods.GetCategoryColor]"
+															}
+
+															blockoverride "barchart_item_margins" {}
+
+															blockoverride "barchart_item_icon" {
+																widget = {
+																	size = { 34 30 }
+																	icon = {
+																		texture = "[Goods.GetTexture]"
+																		tooltip = "[Goods.GetStatePriceDesc]"
+																		size = { 26 26 }
+																		parentanchor = center
+																		position = { -2 0 }
 
 																		textbox = {
+																			using = fontsize_small
+																			text = "[Goods.GetCompareIconAgainstBasePriceNoTooltip( Goods.GetStatePrice )]"
+																			parentanchor = bottom|right
 																			autoresize = yes
-																			raw_text = "#v [PopConsumptionGoods.GetConsumptionRatio|v%0]#!" 
 																			align = nobaseline
-																			parentanchor = vcenter
-																			minimumsize = { 44 -1 }
-																			maximumsize = { 44 -1 }
+																			position = { 5 0 }
 																		}
 																	}
 																}
+															}
+
+															blockoverride "barchart_plus_others_info" {
+																text = "AND_X_MORE_NEEDS"
+																tooltip = "NEEDS_BREAKDOWN"
+																size = { 28 -1 }
 															}
 														}
 													}
@@ -2085,7 +2139,7 @@ types pop_browser_panel_types
 		}
 	}
 
-	type filtered_pop_type_pol_str_piechart = pop_browser_chart {
+	type filtered_pop_type_pol_str_piechart = browser_chart {
 		blockoverride "datamodel" {
 			datamodel = "[PopBrowserPanel.GetFilteredPopTypesSortedByPolStr]"
 		}
@@ -2108,11 +2162,13 @@ types pop_browser_panel_types
 
 		blockoverride "leftside_info" {
 			text = "[PopType.GetName]"
-			onclick = "[PopBrowserPanel.ToggleIncludePopTypeInFilter(PopType.AccessSelf)]"
+			onclick = "[PopBrowserPanel.PopTypeFilterHideAll]" 
+			onclick = "[PopBrowserPanel.PopTypeFilterToggleShown(PopType.AccessSelf)]"
 		}
 
 		blockoverride "area_onclick" {
-			onclick = "[PopBrowserPanel.ToggleIncludePopTypeInFilter(PopType.AccessSelf)]"
+			onclick = "[PopBrowserPanel.PopTypeFilterHideAll]" 
+			onclick = "[PopBrowserPanel.PopTypeFilterToggleShown(PopType.AccessSelf)]"
 		}
 
 		blockoverride "rightside_info" {
@@ -2120,7 +2176,7 @@ types pop_browser_panel_types
 		}
 	}
 
-	type filtered_pop_type_population_piechart = pop_browser_chart {
+	type filtered_pop_type_population_piechart = browser_chart {
 		blockoverride "datamodel" {
 			datamodel = "[PopBrowserPanel.GetFilteredPopTypes]"
 		}
@@ -2143,11 +2199,13 @@ types pop_browser_panel_types
 
 		blockoverride "leftside_info" {
 			text = "[PopType.GetName]"
-			onclick = "[PopBrowserPanel.ToggleIncludePopTypeInFilter(PopType.AccessSelf)]"
+			onclick = "[PopBrowserPanel.PopTypeFilterHideAll]" 
+			onclick = "[PopBrowserPanel.PopTypeFilterToggleShown(PopType.AccessSelf)]"
 		}
 
 		blockoverride "area_onclick" {
-			onclick = "[PopBrowserPanel.ToggleIncludePopTypeInFilter(PopType.AccessSelf)]"
+			onclick = "[PopBrowserPanel.PopTypeFilterHideAll]" 
+			onclick = "[PopBrowserPanel.PopTypeFilterToggleShown(PopType.AccessSelf)]"
 		}
 
 
@@ -2156,7 +2214,7 @@ types pop_browser_panel_types
 		}
 	}
 
-	type filtered_state_population_piechart = pop_browser_chart {
+	type filtered_state_population_piechart = browser_chart {
 		blockoverride "datamodel" {
 			datamodel = "[PopBrowserPanel.GetFilteredStates]"
 		}
@@ -2179,11 +2237,13 @@ types pop_browser_panel_types
 
 		blockoverride "leftside_info" {
 			text = "[State.GetName]"
-			onclick = "[PopBrowserPanel.ToggleIncludeStateInFilter(State.AccessSelf)]"
+			onclick = "[PopBrowserPanel.StateFilterHideAllStates]"
+			onclick = "[PopBrowserPanel.StateFilterToggleShown(State.AccessSelf)]"
 		}
 
 		blockoverride "area_onclick" {
-			onclick = "[PopBrowserPanel.ToggleIncludeStateInFilter(State.AccessSelf)]"
+			onclick = "[PopBrowserPanel.StateFilterHideAllStates]"
+			onclick = "[PopBrowserPanel.StateFilterToggleShown(State.AccessSelf)]"
 		}
 
 		blockoverride "rightside_info" {
@@ -2191,7 +2251,7 @@ types pop_browser_panel_types
 		}
 	}
 
-	type filtered_culture_population_piechart = pop_browser_chart {
+	type filtered_culture_population_piechart = browser_chart {
 		blockoverride "datamodel" {
 			datamodel = "[PopBrowserPanel.GetFilteredCultures]"
 		}
@@ -2214,11 +2274,13 @@ types pop_browser_panel_types
 
 		blockoverride "leftside_info" {
 			text = "[Culture.GetName]"
-			onclick = "[PopBrowserPanel.ToggleIncludeCultureInFilter(Culture.AccessSelf)]"
+			onclick = "[PopBrowserPanel.CultureFilterHideAll]" 
+			onclick = "[PopBrowserPanel.CultureFilterToggleShown(Culture.AccessSelf)]"
 		}
 
 		blockoverride "area_onclick" {
-			onclick = "[PopBrowserPanel.ToggleIncludeCultureInFilter(Culture.AccessSelf)]"
+			onclick = "[PopBrowserPanel.CultureFilterHideAll]" 
+			onclick = "[PopBrowserPanel.CultureFilterToggleShown(Culture.AccessSelf)]"
 		}
 
 		blockoverride "rightside_info" {
@@ -2226,7 +2288,7 @@ types pop_browser_panel_types
 		}
 	}
 
-	type filtered_religion_population_piechart = pop_browser_chart {
+	type filtered_religion_population_piechart = browser_chart {
 		blockoverride "datamodel" {
 			datamodel = "[PopBrowserPanel.GetFilteredReligions]"
 		}
@@ -2249,11 +2311,13 @@ types pop_browser_panel_types
 
 		blockoverride "leftside_info" {
 			text = "[Religion.GetName]"
-			onclick = "[PopBrowserPanel.ToggleIncludeReligionInFilter(Religion.AccessSelf)]"
+			onclick = "[PopBrowserPanel.ReligionFilterHideAll]" 
+			onclick = "[PopBrowserPanel.ReligionFilterToggleShown(Religion.AccessSelf)]" 
 		}
 
 		blockoverride "area_onclick" {
-			onclick = "[PopBrowserPanel.ToggleIncludeReligionInFilter(Religion.AccessSelf)]"
+			onclick = "[PopBrowserPanel.ReligionFilterHideAll]" 
+			onclick = "[PopBrowserPanel.ReligionFilterToggleShown(Religion.AccessSelf)]" 
 		}
 
 		blockoverride "rightside_info" {
@@ -2261,7 +2325,7 @@ types pop_browser_panel_types
 		}
 	}
 
-	type pop_browser_chart = container {
+	type browser_chart = container {
 		onmousehierarchyenter = "[PdxGuiWidget.FindChild('chart_button').InterruptThenTriggerAnimation('hide_chart_button','show_chart_button')]"
 		onmousehierarchyleave = "[PdxGuiWidget.FindChild('chart_button').InterruptThenTriggerAnimation('show_chart_button','hide_chart_button')]"
 		alwaystransparent = no
@@ -2442,3 +2506,4 @@ template pop_browser_filter_button_icon {
 template pop_browser_section_header_size {
 	size = { 404 38 }
 }
+

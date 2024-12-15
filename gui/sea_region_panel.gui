@@ -53,6 +53,7 @@ types sea_region_panel_types
 				}
 				blockoverride "first_button_click" {
 					onclick = "[InformationPanel.SelectTab('default')]"
+					#onclick = "[SeaRegionPanel.ToggleShowMilitaryMapMode]" # Todo - PRCAL-35708 - This should toggle the Military Map Mode off, unsure if this is needed if it is all done in code, but I will leave it here as a suggestion.
 				}
 				blockoverride "first_button_visibility" {
 					visible = "[InformationPanel.IsTabSelected('default')]"
@@ -75,6 +76,7 @@ types sea_region_panel_types
 				}
 				blockoverride "second_button_click" {
 					onclick = "[InformationPanel.SelectTab('navy')]"
+					#onclick = "[SeaRegionPanel.ToggleShowMilitaryMapMode]" # Todo - PRCAL-35708 - This should toggle the Military Map Mode on. We need to make sure that whenever the Navy tab is open, the mm_military map mode is shown.
 				}
 				blockoverride "second_button_visibility" {
 					visible = "[InformationPanel.IsTabSelected('navy')]"
@@ -174,15 +176,14 @@ types sea_region_panel_types
 						}
 					}
 
-					textbox = {
-						visible = "[IsDataModelEmpty(SeaRegionPanel.GetPresentNeutralFleets)]"
-						maximumsize = { 170 -1 }
+					empty_state = {
 						parentanchor = hcenter
-						margin_top = 40
-						autoresize = yes
-						align = center|nobaseline
-						multiline = yes
-						text = "SEA_REGION_PANEL_NO_PRESENT_NEUTRAL_FLEETS"
+						blockoverride "visible" {
+							visible = "[IsDataModelEmpty(SeaRegionPanel.GetPresentNeutralFleets)]"
+						}
+						blockoverride "text" {
+							text = "SEA_REGION_PANEL_NO_PRESENT_NEUTRAL_FLEETS"
+						}
 					}
 				}
 

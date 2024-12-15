@@ -2,23 +2,23 @@
 ### when you make a change please mark it very clearly using a pair of comment lines with the text '### v3' and '### to here'
 ### texture paths and audio event ids are an exception to this and can be changed without marking
 
-template POPSTextStyle
+template SDKTextStyle
 {
 	using = Font_Type_Standard
 	using = Font_Size_Small
 	align = left
 	default_format = "#medium"
 
-	block "pops_text_style"
+	block "sdk_text_style"
 	{
 	}
 }
 
-template POPSButtonTextStyle
+template SDKButtonTextStyle
 {
-	block "pops_button_text_style"
+	block "sdk_button_text_style"
 	{
-		name = "pops_button_text"
+		name = "sdk_button_text"
 		parentanchor = vcenter|hcenter
 		#font = StandardGameFont
 		#fontsize = 15
@@ -29,9 +29,9 @@ template POPSButtonTextStyle
 	}
 }
 
-template POPSErrorTextStyle
+template SDKErrorTextStyle
 {
-	block "pops_error_text_style"
+	block "sdk_error_text_style"
 	{
 		#font = StandardGameFont
 		align = left
@@ -40,9 +40,9 @@ template POPSErrorTextStyle
 	}
 }
 
-template POPSButtonStyle
+template SDKButtonStyle
 {
-	block "pops_button_style"
+	block "sdk_button_style"
 	{
 		texture = "gfx/editor_gui/editor_button.dds"
 		gfxtype = framedbuttongfx
@@ -58,9 +58,9 @@ template POPSButtonStyle
 	}
 }
 
-template POPSDropdownButtonStyle
+template SDKDropdownButtonStyle
 {
-	block "pops_dropdown_button_style"
+	block "sdk_dropdown_button_style"
 	{
 		texture = "gfx/editor_gui/editor_dropdown.dds"
 		spriteType = CorneredStretched
@@ -77,9 +77,9 @@ template POPSDropdownButtonStyle
 	}
 }
 
-template pops_dropdown_enum
+template sdk_dropdown_enum
 {
-	block "pops_dropdown_enum"
+	block "sdk_dropdown_enum"
 	{
 		alwaystransparent = no
 		active_item = {
@@ -92,7 +92,7 @@ template pops_dropdown_enum
 
 				button = {
 					size = { 100% 100% }
-					using = POPSDropdownButtonStyle
+					using = SDKDropdownButtonStyle
 				}
 
 				editor_textbox = {
@@ -179,57 +179,145 @@ template pops_dropdown_enum
 	}
 }
 
-types POPS
+template sdk_vertical_scrollbar
 {
-	type pops_vertical_spacer = widget {
-		block "pops_vertical_spacer"
+	block "sdk_vertical_scrollbar"
+	{
+		using = editor_vertical_scrollbar
+	}
+}
+
+template sdk_horizontal_scrollbar
+{
+	block "sdk_horizontal_scrollbar"
+	{
+		using = editor_horizontal_scrollbar
+	}
+}
+
+types SDK
+{
+	type sdk_vertical_spacer = widget {
+		block "sdk_vertical_spacer"
 		{
 			size = { 0 5 }
 		}
 	}
 
-	type pops_horizontal_spacer = widget {
-		block "pops_horizontal_spacer"
+	type sdk_horizontal_spacer = widget {
+		block "sdk_horizontal_spacer"
 		{
 			size = { 5 0 }
 		}
 	}
 
-	type pops_window = window {
-
-		block "pops_window"
+	type sdk_window = window {
+		block "sdk_window"
 		{
+			shaderfile = "gfx/FX/pdxgui_default.shader"
+			texture = "gfx/editor_gui/editor_window.dds"
+			spriteType = CorneredStretched
+			spriteborder = { 6 6 }
+			spriteborder_top = 30
+			gfxtype = windowgfx
+			alwaystransparent = no
+			resizable = yes
+			scissor = yes
+			size = { 128 64 }
 			movable = yes
+			filter_mouse = none
+			
+			editor_textbox = {
+				position = { 10 4 }
+				size = { 20 20 }
+				autoresize = yes
+
+				block "title_properties" {}
+				block "title"
+				{
+					raw_text = "#BOLD;COLOR:{1.0,1.0,1.0} Untitled #!"
+				}
+			}
 
 			vbox = {
-				using = Window_Margins
-				layoutpolicy_horizontal = expanding
-				layoutpolicy_vertical = expanding
+				block "vbox_properties"
+				{
+					margin = { 4 4 }
+					alwaystransparent = yes
+					restrictparent_min = yes
+				}
+				
+				widget = {
+					size = { 0 29 }
+					layoutpolicy_horizontal = Fixed
+				}
 
-				block "content_layout"
-				{}
+				block "before_content"
+				{
+				}
+				
+				hbox = {
+					block "hbox_properties"
+					{
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = Preferred
+					}
+
+					widget = {
+						size = { 5 0 }
+						layoutpolicy_horizontal = Fixed
+					}
+
+					block "content_layout"
+					{
+						vbox = {
+							scissor = yes
+							
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = preferred
+						
+							block "content" 
+							{
+							}
+							
+							widget = {
+								layoutpolicy_vertical = preferred
+							}
+						}
+					}
+					
+					widget = {
+						size = { 5 0 }
+						layoutpolicy_horizontal = Fixed
+					}
+				}
+				
+				widget = {
+					size = { 0 5 }
+					layoutpolicy_vertical = Fixed
+				}
 			}
 		}
 	}
 
-	type pops_button = button {
-		block "pops_button_size"
+	type sdk_button = button {
+		block "sdk_button_size"
 		{
 			size = { 150 50 }
 			minimumsize = { 150 50 }
 		}
 
-		using = POPSButtonStyle
+		using = SDKButtonStyle
 
 		buttonText = {
 			textbox = {
-				using = POPSButtonTextStyle
+				using = SDKButtonTextStyle
 			}
 		}
 	}
 
-	type pops_button_wide = pops_button {
-		block "pops_button_size"
+	type sdk_button_wide = sdk_button {
+		block "sdk_button_size"
 		{
 			size = { 200 50 }
 			minimumsize = { 150 50 }
@@ -237,7 +325,7 @@ types POPS
 	}
 
 	### v3 replacement ( our cogwheel )
-	type pops_load_indicator = cogwheel_animation_small
+	type sdk_load_indicator = cogwheel_animation_small
 	{
 		size = { 38 38 }
 		block "load_indicator"
@@ -245,7 +333,7 @@ types POPS
 			visible = no
 		}
 	}
-	#type pops_load_indicator = progressbar
+	#type sdk_load_indicator = progressbar
 	#{
 	#	# parentanchor = vcenter|hcenter
 	#	size = { 44 44 }
@@ -261,42 +349,39 @@ types POPS
 	#}
 	### to here
 
-	# empty definition for unused type
-	type pops_generic_entry = widget {}
-
-	type pops_button_load_indicator = button_standard {
-		pops_load_indicator = {}
+	type sdk_button_load_indicator = button_standard {
+		sdk_load_indicator = {}
 	}
 
-	type pops_textbox = textbox {
+	type sdk_textbox = textbox {
 		text = ""
 		block "textbox_size"
 		{
 			size = { 200 30 }
 		}
-		using = POPSTextStyle
+		using = SDKTextStyle
 		block "textboxstyle"
 		{
 		}
 	}
 
-	type pops_error_textbox = textbox {
+	type sdk_error_textbox = textbox {
 		text = ""
 		multiline = yes
 		layoutpolicy_vertical = expanding
-		using = POPSErrorTextStyle
+		using = SDKErrorTextStyle
 		block "textboxstyle"
 		{
 		}
 	}
 
-	type pops_required_textbox = textbox {
+	type sdk_required_textbox = textbox {
 		block "required_field"
 		{
 			raw_text = "*"
 		}
 		minimumsize = { 10 -1 }
-		using = POPSTextStyle
+		using = SDKTextStyle
 		autoresize = yes
 		block "textboxstyle"
 		{
@@ -304,19 +389,19 @@ types POPS
 		fontcolor = { 1 0 0 1 }
 	}
 
-	type pops_dropdown = dropDown {
+	type sdk_dropdown = dropDown {
 		layoutpolicy_horizontal = expanding
-		block "pops_dropdown_name"
+		block "sdk_dropdown_name"
 		{
-			name = "pops_dropdown"
+			name = "sdk_dropdown"
 		}
-		block "pops_dropdown"
+		block "sdk_dropdown"
 		{
 		}
-		using = pops_dropdown_enum
+		using = sdk_dropdown_enum
 	}
 
-	type pops_textbox_entry = hbox {
+	type sdk_textbox_entry = hbox {
 		layoutpolicy_horizontal = expanding
 		restrictparent_min = yes
 		layoutpolicy_vertical = fixed
@@ -337,21 +422,21 @@ types POPS
 		}
 	}
 
-	type pops_dropdown_entry = hbox {
+	type sdk_dropdown_entry = hbox {
 		layoutpolicy_horizontal = expanding
-		pops_required_textbox={}
-		pops_vertical_spacer={}
-		pops_textbox = {
+		sdk_required_textbox={}
+		sdk_vertical_spacer={}
+		sdk_textbox = {
 			block "title"
 			{
 				raw_text = "Title:"
 			}
 		}
-		pops_dropdown = {
+		sdk_dropdown = {
 		}
 	}
 
-	type pops_checkbutton = hbox {
+	type sdk_checkbutton = hbox {
 		checkbutton = {
 			gfxtype = checkbuttongfx
 			shaderfile = "gfx/FX/pdxgui_pushbutton.shader"
@@ -364,9 +449,9 @@ types POPS
 			}
 		}
 
-		pops_horizontal_spacer={}
+		sdk_horizontal_spacer={}
 
-		pops_textbox = {
+		sdk_textbox = {
 			multiline = yes
 			#size = { 300 100% }
 			maximumsize = { 300 800 }

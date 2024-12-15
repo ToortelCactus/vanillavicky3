@@ -75,12 +75,11 @@ types outliner_types {
 				}
 				
 				outliner_events = {}
+				outliner_players = {}
 				outliner_diplomatic_plays = {}
 				outliner_diplomatic_pacts = {}
-				outliner_civil_wars = {}
 				outliner_law_enactment = {}
 				outliner_revolutionary_political_movement_item = {}
-				outliner_non_revolutionary_political_movement_list = {}
 				outliner_election = {}
 			}
 			
@@ -248,24 +247,6 @@ types outliner_types {
 					blockoverride "outliner_datamodel" {
 						datamodel = "[OutlinerEntry.AccessPinnedSubEntries]"
 					}
-
-					outliner_players = {
-						blockoverride "visibility" {
-							visible = "[OutlinerEntry.IsShownPinned]"
-						}
-
-						blockoverride "title_click" {
-							onclick = "[OutlinerEntry.TogglePinnedExpanded]"
-						}
-
-						blockoverride "list_visibility" {
-							visible = "[OutlinerEntry.IsPinnedExpanded]"
-						}
-
-						blockoverride "pinnable_expand_buttons" {
-							pinned_expand_buttons = {}
-						}
-					}
 					
 					outliner_countries = {
 						blockoverride "visibility" {
@@ -362,6 +343,42 @@ types outliner_types {
 					outliner_interest_groups = {
 						datacontext = "[Outliner.AccessCategory('marginalized_interest_groups')]"
 
+						blockoverride "visibility" {
+							visible = "[OutlinerEntry.IsShownPinned]"
+						}
+
+						blockoverride "title_click" {
+							onclick = "[OutlinerEntry.TogglePinnedExpanded]"
+						}
+
+						blockoverride "list_visibility" {
+							visible = "[OutlinerEntry.IsPinnedExpanded]"
+						}
+
+						blockoverride "pinnable_expand_buttons" {
+							pinned_expand_buttons = {}
+						}
+					}
+
+					outliner_non_revolutionary_political_movements = {
+						blockoverride "visibility" {
+							visible = "[OutlinerEntry.IsShownPinned]"
+						}
+
+						blockoverride "title_click" {
+							onclick = "[OutlinerEntry.TogglePinnedExpanded]"
+						}
+
+						blockoverride "list_visibility" {
+							visible = "[OutlinerEntry.IsPinnedExpanded]"
+						}
+
+						blockoverride "pinnable_expand_buttons" {
+							pinned_expand_buttons = {}
+						}
+					}
+
+					outliner_political_lobbies = {
 						blockoverride "visibility" {
 							visible = "[OutlinerEntry.IsShownPinned]"
 						}
@@ -615,6 +632,8 @@ types outliner_types {
 					outliner_interest_groups = {
 						datacontext = "[Outliner.AccessCategory('marginalized_interest_groups')]"
 					}
+					outliner_non_revolutionary_political_movements = {}
+					outliner_political_lobbies = {}
 					outliner_agitators = {}
 					outliner_politicians = {}
 				}
@@ -626,7 +645,6 @@ types outliner_types {
 					parentanchor = hcenter
 					visible = "[GetVariableSystem.HasValue('outliner_tab', 'diplomacy')]"
 					
-					outliner_players = {}
 					outliner_countries = {}
 					outliner_countries = {
 						datacontext = "[Outliner.AccessCategory('unrecognized_countries')]"
@@ -670,7 +688,6 @@ types outliner_types {
 					visible = "[GetVariableSystem.HasValue('outliner_tab', 'all')]"
 					
 					### Regular
-					outliner_players = {}
 					outliner_countries = {}
 					outliner_countries = {
 						datacontext = "[Outliner.AccessCategory('unrecognized_countries')]"
@@ -683,6 +700,9 @@ types outliner_types {
 					outliner_interest_groups = {
 						datacontext = "[Outliner.AccessCategory('marginalized_interest_groups')]"
 					}
+
+					outliner_non_revolutionary_political_movements = {}
+					outliner_political_lobbies = {}
 
 					outliner_formations = {
 						datacontext = "[Outliner.AccessCategory('army')]"

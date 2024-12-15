@@ -379,8 +379,7 @@ types goods_state_panel {
 	type goods_state_panel_input_output_item = container {
 		minimumsize = { @panel_width_half -1 }
 
-		tooltip = "[GoodsPanelValue.GetTooltip]"
-
+		using = market_goods_orders_with_table
 
 		flowcontainer = {
 			margin_top = 5
@@ -390,7 +389,7 @@ types goods_state_panel {
 			icon = {
 				visible = "[GoodsPanelValue.HasBuildingInfo]"
 				size = { 23 23 }
-				texture = "[GoodsPanelValue.GetBuilding.GetTexture]"
+				texture = "[GoodsPanelValue.GetBuilding.GetIcon]"
 			}
 
 			textbox = {
@@ -422,8 +421,6 @@ types goods_state_panel {
 
 		flowcontainer = {
 			visible = "[GoodsPanelValue.HasBuildingInfo]"
-			datacontext = "[GoodsPanelValue.GetBuilding]"
-			datacontext = "[Building.GetBuildingType]"
 			position = { 0 35 }
 			direction = vertical
 			margin_left = 5
@@ -432,7 +429,11 @@ types goods_state_panel {
 
 			### DOWNSIZE / EXPAND
 			container = {
+				datacontext = "[GoodsPanelValue.GetBuilding]"
+				datacontext = "[Building.GetBuildingType]"
 				minimumsize = { 265 35 }
+
+				using = building_size_tooltip_with_ownership
 
 				### DOWNSIZE
 				button_icon_minus_action = {
@@ -475,7 +476,7 @@ types goods_state_panel {
 					}
 
 					textbox = {
-						text = "[Building.GetExpansionLevelDesc]"
+						text = "BUILDING_SIZE"
 						align = hcenter|nobaseline
 						size = { 195 35 }
 						elide = right
@@ -484,18 +485,16 @@ types goods_state_panel {
 				}
 
 				### EXPAND
-				button_icon_plus_action = {
+				expand_building_button = {
 					widgetid = "[Concatenate('building_expand', Building.GetIDString)]"
-					size = { 35 35 }
+
 					parentanchor = right|vcenter
-					tooltip = "[Building.GetQueueConstructionTooltip]"
-					onclick = "[Execute( Building.QueueConstruction )]"
-					enabled = "[IsValid( Building.QueueConstruction )]"
-					visible = "[And(And(Building.GetOwner.IsLocalPlayer, Building.IsExpandable), Not(BuildingType.IsMilitaryBuilding))]"
 				}
 			}
 
 			container = {
+				datacontext = "[GoodsPanelValue.GetBuilding]"
+				datacontext = "[Building.GetBuildingType]"
 				flowcontainer = {
 					datamodel = "[Building.AccessProductionMethodGroups]"
 					spacing = 4
